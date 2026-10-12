@@ -39,6 +39,7 @@ int testRun(void) {
         }
     }
 
+    printf("결과\n");
     printf("pass: %d / fail: %d\n", passed, failed);
     return failed;
 }

@@ -121,9 +121,11 @@ OBJ_DIR     := $(BUILD_DIR)/obj
 TARGET      := $(BUILD_DIR)/$(APP_NAME)$(EXE)
 TEST_TARGET := $(BUILD_DIR)/test_runner$(EXE)
 
-# -MMD -MP : 헤더(.h)가 바뀌면 그 헤더를 쓰는 소스도 자동 재컴파일
+# include 아래에서 .h가 들어 있는 모든 폴더를 헤더 검색 경로로 등록
+INC_DIRS := $(sort $(dir $(call rwildcard,$(INC_DIR),*.h)))
+
 CFLAGS  := -Wall -Wextra $(STD_FLAG) $(OPT_FLAGS) -MMD -MP \
-           -I$(INC_DIR) $(addprefix -I,$(EXT_INC_DIRS))
+           $(addprefix -I,$(INC_DIRS)) $(addprefix -I,$(EXT_INC_DIRS))
 LDFLAGS := $(addprefix -L,$(EXT_LIB_DIRS)) $(STATIC_LDFLAGS)
 LDLIBS  := $(addprefix -l,$(EXT_LIBS))
 
@@ -156,10 +158,13 @@ $(OBJ_DIR)/src/%.o: $(SRC_DIR)/%.$(SRC_EXT)
 	@mkdir -p $(dir $@)
 	$(COMPILER) $(CFLAGS) -c $< -o $@
 
+# tests 아래에서 .h가 들어 있는 모든 폴더를 헤더 검색 경로로 등록
+TEST_INC_DIRS := $(sort $(dir $(call rwildcard,$(TEST_DIR),*.h)))
+
 # [컴파일] tests -> build/obj/tests
 $(OBJ_DIR)/tests/%.o: $(TEST_DIR)/%.$(SRC_EXT)
 	@mkdir -p $(dir $@)
-	$(COMPILER) $(CFLAGS) -c $< -o $@
+	$(COMPILER) $(CFLAGS) $(addprefix -I,$(TEST_INC_DIRS)) -c $< -o $@
 
 run: build
 	./$(TARGET) $(ARGS)
