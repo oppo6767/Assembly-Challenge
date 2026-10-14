@@ -7,7 +7,7 @@ typedef struct {
     TestFunc func;
 } TestCase;
 
-#define MAX_TESTS 50
+#define MAX_TESTS 150
 
 static TestCase tests[MAX_TESTS];   /* 등록 표 */
 static int test_count = 0;     /* 등록된 개수 */
