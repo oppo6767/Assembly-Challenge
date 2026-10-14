@@ -1,4 +1,4 @@
-#include <string.h>
+#include "common.h"
 #include "dctab.h"
 
 // 지시자 선언

@@ -1,5 +1,5 @@
 #pragma once
-#include <stdio.h>
+#include "common.h"
 
 extern char LBUF[128];
 extern char* LNO;

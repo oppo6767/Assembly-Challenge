@@ -1,5 +1,4 @@
-#include <string.h>
-#include <ctype.h>
+#include "common.h"
 #include "rdline.h"
 #include "optab.h"
 #include "dctab.h"

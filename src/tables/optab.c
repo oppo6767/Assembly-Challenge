@@ -1,4 +1,4 @@
-#include <string.h>
+#include "common.h"
 #include "optab.h"
 
 // optab 정의

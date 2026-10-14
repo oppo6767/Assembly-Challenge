@@ -1,4 +1,4 @@
-#include <string.h>
+#include "common.h"
 #include "symtab.h"
 
 int SYMCNT = 1;                                  // 0번 칸 - RND / 1번 칸 이후부터 등록
