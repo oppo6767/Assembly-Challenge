@@ -23,6 +23,7 @@ void OnePassAssemble(char *sfile) {
     Optab* op;
     Dctab* dp;
     int len;
+    int comment;
 
     if (!(fp = fopen(sfile, "r"))) {
         fprintf(stderr, "File '%s' not found...\n", sfile);
@@ -45,10 +46,22 @@ void OnePassAssemble(char *sfile) {
     }
 
     ins_SYMTAB(LOC, LABEL);
+    if (!LNO) LNO = null_LNO;
+    if (!OPerand) OPerand = null_OPR;
     put_list();
     LDaddr = GOaddr = LOC;
 
-    while (read_line(fp) > 0) {
+    while ((comment = read_line(fp)) > 0) {
+        if (comment == 3) {
+            printf("                %s\n", LBUF);
+            continue;
+        }
+
+        if (comment == 2) {
+            printf("\n");
+            continue;
+        }
+
         if (!OPcode) {
             fprintf(stderr, "\n%s --> Opcode is not defined ...\n", LBUF);
             exit(4);
@@ -80,8 +93,8 @@ void OnePassAssemble(char *sfile) {
         }
 
         if (!OPerand) OPerand = null_OPR;
-        if (!LNO)     LNO = null_LNO;
-        if (!LABEL)   LABEL = null_LBL;
+        if (!LNO) LNO = null_LNO;
+        if (!LABEL) LABEL = null_LBL;
         put_list();
         LOC += len;
     }
@@ -96,6 +109,7 @@ void OnePassAssemble(char *sfile) {
     
     PGsize = LOC - LDaddr;
     LABEL = null_LBL;
+    if (!LNO) LNO = null_LNO;
     put_list();
 
     exit(0);
