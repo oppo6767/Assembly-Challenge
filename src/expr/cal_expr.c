@@ -3,42 +3,44 @@
 #include "cal_term.h"
 
 // 수식 계산 - ex) "10h+10"
-int cal_one_expr(char* expr) { // expr = 수식 포인터(문자 하나임 동치내용(expr[i]))
-    int expv;                  // 수식
+int cal_one_expr(char* expr) { // expr = 수식 포인터 시작주소임(*expr == expr[0] = 첫 문자)
+    int expv;                  // 결과 값
     int v1;                    // 값1
     int v2;                    // 값2
-    int sign;                  // 부호
+    int sign;                  // 1항 부호
     char* pp = NULL;           // 플러스 포인터
     char* mp = NULL;           // 마이너스 포인터
     char* v2p = NULL;          // 2항
 
-    // expr 문자 부호를 확인 후 0이면 sign에 1을 아니면 반환값 할당 후 다음 문자 확인(1항만 확인)
-    if ((sign = issign(*expr)) != 0) expr++;
-    else sign = 1;
+    // 1항 부호 확인
+    if ((sign = issign(*expr)) != 0) expr++;  // 첫 문자가 부호면 sign에 저장 후 다음 문자로 이동
+    else sign = 1;                            // 부호가 없으면 sign에 1 저장(양수)
 
-    if ((pp = strchr(expr, '+'))) *pp = 0;      // 문자열에 +가 있으면 pp에 해당 문자 주소 저장 아닐 경우 0을 할당
-    else if ((mp = strchr(expr, '-'))) *mp = 0; // 문자열에 -가 있으면 mp에 해당 문자 주소 저장 아닐 경우 0을 할당
+    // 2항이 존재하는지 확인
+    if ((pp = strchr(expr, '+'))) *pp = 0;      // 문자열에 +가 있으면 pp에 해당 문자 주소(expr[i]) 저장 그 자리를 0으로 저장 -> 1항/2항으로 나눔
+    else if ((mp = strchr(expr, '-'))) *mp = 0; // 문자열에 -가 있으면 mp에 해당 문자 주소(expr[i]) 저장 그 자리를 0으로 저장 -> 1항/2항으로 나눔
     
-    // pp가 참이면 2항에 pp + 1하기 / pp에 값이 없으며 mp에 값이 있을 경우 2하에 mp + 1하기 -> 맞나?
-    if (pp) v2p = pp + 1;
-    else if (mp) v2p = mp + 1;
+    // 2항 값으로 이동시키기
+    if (pp) v2p = pp + 1;       // pp가 참이면 2항 = pp + 1하기('+' 다음 주소로 이동)
+    else if (mp) v2p = mp + 1;  // mp가 참이면 2항 = mp + 1하기('-' 다음 주소로 이동)
 
-    v1 = sign * cnv_one_term(expr);   // 1항 = 부호값 * 함수 정상 반환값
-    if (v2p) v2 = cnv_one_term(v2p);  // 2항이 있을 경우 -> 2항 = 함수 정상 반환값
+    // 각 항을 정수 값으로 변환
+    v1 = sign * cnv_one_term(expr);   // 1항 = 부호값 * 변환 값
+    if (v2p) v2 = cnv_one_term(v2p);  // 2항이 있을 경우 -> 2항 = 변환 값
 
-    // pp가 참이면 값1 + 값2 / mp가 참이면 값1 - 값2 / 둘다 아니면 값1
-    if (pp) expv = v1 + v2;
-    else if (mp) expv = v1 - v2;
-    else expv = v1;
+    // 정수 계산
+    if (pp) expv = v1 + v2;       // pp가 참이면 값1 + 값2
+    else if (mp) expv = v1 - v2;  // mp가 참이면 값1 - 값2 
+    else expv = v1;               // 둘다 아니면 값1
 
-    return expv; // 수식 결과 반환
+    return expv; // 결과 값 반환
 }
 
 /**
- * 부호함수
- * - c가 0보다 크면 = 1
- * - c가 0보다 작으면 = -1
- * - c가 0과 같다면 = 0
+ * 부호함수(수학 sgn(c) vs 코드 풀이)
+ * - c가 0보다 크면 = 1    <-> + 이면 1 반환
+ * - c가 0보다 작으면 = -1 <-> - 이면 -1 반환
+ * - c가 0과 같다면 = 0    <-> 아무것도 없으면 0 반환(아스키코드)
  */
 int issign(int c) {
     switch (c) {
