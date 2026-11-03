@@ -11,7 +11,7 @@ int cal_dc_oprnd(char* oprnd, int unit, unsigned char obj[]) { // 피연산자, 
     char* op = (char*)(obj +1);    // obj[1]부터 한 바이트씩 써 나가는 위치
     short* sp = (short*)(obj +1);  // 현재 사용안함
     int* ip = (int*)(obj +1);      // 현재 사용안함
-    int n = 0;                     // 지금까지 꺼낸 값의 개수
+    // int n = 0;                  // 지금까지 꺼낸 값의 개수 <- pass2에서는 필요없는 내용
     int v;                         // 정수 값 저장 변수
     int len = 0;                   // 길이
 
@@ -19,17 +19,17 @@ int cal_dc_oprnd(char* oprnd, int unit, unsigned char obj[]) { // 피연산자, 
     exp = strtok(buf, ",");        // 첫 번째 ,를 \0으로 자르고, ,를 제외한 첫 번째 값("1")의 시작 주소 저장
 
     /**
-     * 꺼낸 값의 개수(n)가 MAX_DNUM(8)개보다 많을 경우 오류 출력 및 종료
+     * 꺼낸 값의 개수(n)가 MAX_DNUM(8)개보다 많을 경우 오류 출력 및 종료 <- pass2에 필요없는 내용
      * 아닐 경우
      * - 지금 꺼낸 값 정수로 변환
      * - 초기화 명령어 크기 만큼 메모리 확보 -> op가 가리키는 obj 칸 (8 비트열), 길이(len) 증가
      * 그 다음 ,위치를 찾고 있으면 exp에 , 다음 위치 저장 없으면 NULL 저장
      */
     do {
-        if (++n > MAX_DNUM) {
+        /*if (++n > MAX_DNUM) {
             fprintf(stderr, "%s --> Operand '%s' is not valid ...\n", LBUF, oprnd);
             exit(11);
-        }
+        }*/
 
         /**
          * 비트열 저장 방식 (예: v = 'ABC' = 00000000 01000001 01000010 01000011 = 00 41 42 43)
@@ -80,19 +80,19 @@ int cal_dc_oprnd_string(char* oprnd, unsigned char obj[]) {
      * 피연산자가 문자열일 때 마지막 문자열이 닫는 "를 만나거나, 문자열이 끝나거나, MAX_DNUM(8)글자를 넘을 때까지 반복
      * 1부터 하는 이유: obj[0]은 총 길이 저장, oprnd[0]은 여는 "라서 건너뜀
      * - 목적 배열에 피연산자 i위치 값 할당
-     * - 만약 피연산자 i위치 값이 "이 아니거나(닫는 " 없음) 또는 " 뒤에 글자가 더 있으면 오류 출력 및 종료
+     * - 만약 피연산자 i위치 값이 "이 아니거나(닫는 " 없음) 또는 " 뒤에 글자가 더 있으면 오류 출력 및 종료 <- pass2 필요 없는 내용
      * - 아닐 경우 목적 배열 i위치에 \0 저장 및 obj[0] 위치에 문자열 길이 저장
      */
     for (i = 1; oprnd[i] && oprnd[i] != '\"' && i <= MAX_DNUM; i++)
         obj[i] = oprnd[i];
     
-    if (oprnd[i] != '\"' || oprnd[i + 1]) {
+    /*if (oprnd[i] != '\"' || oprnd[i + 1]) {
         fprintf(stderr, "%s --> Operand '%s' is not valid ...\n", LBUF, oprnd);
         exit(11);
-    }
+    }*/
 
     obj[i] = '\0';
-    obj[0] = i - 1;
-    
-    return (i - 1); // 문자열 길이 반환
+    obj[0] = i; // <- pass2에는 -1를 할 이유가 없어짐
+
+    return (i); // 문자열 길이 반환 <- pass2에는 -1를 할 이유가 없어짐
 }

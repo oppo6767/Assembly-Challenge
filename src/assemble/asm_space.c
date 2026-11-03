@@ -11,25 +11,26 @@
 int asm_space(Dctab *dp) {
     int len;   // 확보할 공간 길이 (바이트 수)
 
-    // 피연산자에 값이 없을 경우 오류 출력 및 종료
-    if (!OPerand) {
+    // 피연산자에 값이 없을 경우 오류 출력 및 종료 <-- pass2에 필요 없는 내용
+    /*if (!OPerand) {
         fprintf(stderr, "%s --> Operand is not defined ...\n", LBUF);
         exit(10);
-    }
+    }*/
 
     /**
      * 지시자 타입이 공간 예약(DC_RESV: RD/RW/RB)일 경우
-     * - 피연산자 처음 값이 숫자가 아니고 피연산자 마지막 값이 h가 아닐 경우
+     * - 피연산자 처음 값이 숫자가 아니고 피연산자 마지막 값이 h가 아닐 경우 <- pass에 필요없는 내용
      * - 또는 값 변환이 실패한 경우
      *      -> 오류 출력 및 종료
      */
     if (dp->type == DC_RESV) {
-        if ((!isdigit(OPerand[0]) && OPerand[strlen(OPerand) -1] != 'h') || (len = str2int(OPerand)) == INV_VAL) {
+        /*if ((!isdigit(OPerand[0]) && OPerand[strlen(OPerand) -1] != 'h') || (len = str2int(OPerand)) == INV_VAL) {
             fprintf(stderr, "%s --> Operand number '%s' is not valid ...\n", LBUF, OPerand);
             exit(11);
-        }
+        }*/
 
-        len *= dp->unit; // 메모리 길이 = 개수(len) * 메모리 바이트 크기(unit) (예: RD 100 -> 100 * 4 = 400)
+        len = str2int(OPerand) * dp->unit; // 메모리 길이 = 문자열 정수 변환값 * 메모리 바이트 크기(unit) (예: RD 100 -> 100 * 4 = 400)
+                                           // len * dp->unit <- pass1 방식
         OBJC[0] = 0;     // 목적 코드 0의 위치에 길이 0할당 (공간만 예약, 목적 코드 없음 -> 출력 칸 비움)
         
         return(len); // 메모리 길이 반환 -> LOC 증가에 사용
