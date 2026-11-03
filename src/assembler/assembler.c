@@ -41,7 +41,6 @@ void OnePassAssemble(char *sfile) {
 
     put_list_head();  // [출력 1] 초반 틀 출력하기 (빈 줄 + 제목 줄 + --- 줄)
     read_line(fp);    // 파일 라인 읽기
-    //if (!LABEL) fprintf(stderr, "\n%s --> Program name is not defined ...\n", LBUF), exit(1);
     if (!LABEL) LABEL = "ASMBLY";              // 라벨(프로그램 이름)이 없을 경우 기본 이름 ASMBLY 할당 (시작 주소와는 상관없음)
     if (!OPcode || strcmp(OPcode, "START")) {  // [오류] 연산자가 START가 아니거나 연산자에 아무 값도 없을 경우 오류 출력 및 종료
         fprintf(stderr, "\n%s --> Opcode is not 'START' ...\n", LBUF);
