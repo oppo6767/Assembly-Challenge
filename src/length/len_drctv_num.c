@@ -1,5 +1,6 @@
 #include "common.h"
 #include "len_drctv_num.h"
+#include "asm_mnmo.h"
 #include "rdline.h"
 
 // 변수 공간 초기값 길이 계산 - DD/DW/DB (패스_1용, 값 자체는 계산하지 않고 개수만 셈)

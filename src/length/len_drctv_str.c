@@ -1,5 +1,6 @@
 #include "common.h"
 #include "len_drctv_str.h"
+#include "asm_mnmo.h"
 #include "rdline.h"
 
 // 변수 공간 초기값(문자열) 길이 계산 - DB "ABC" (패스_1용, 글자는 복사하지 않고 개수만 셈)
