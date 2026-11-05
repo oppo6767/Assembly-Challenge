@@ -6,6 +6,7 @@
 #include "asm_mnmo.h"
 #include "asm_space.h"
 #include "put_list.h"
+#include "obj.h"  // 목적 프로그램 출력 함수
 
 // 패스_2: 소스를 처음부터 다시 읽으며 목적 코드 생성 + 리스트 출력
 // (오류 검사는 패스_1에서 끝났으므로 생략)
@@ -20,6 +21,7 @@ void Pass_2(char* sfile) {
     put_list_head();               // [출력 1] 초반 틀 출력하기 (빈 줄 + 제목 줄 + --- 줄)
     read_line(fp);                 // 첫 줄(START) 읽기
     if (!LABEL) LABEL = "ASMBLY";  // 라벨(프로그램 이름)이 없을 경우 기본 이름 ASMBLY 할당
+    put_obj_head(sfile, LABEL, LDaddr, PGsize);  // 목적 프로그램: 헤드(H) 레코드 출력 (프로그램 이름, 시작 주소, 크기)
     if (!LNO) LNO = null_LNO;          // 줄 번호가 없을 경우 빈줄 할당
     if (!OPerand) OPerand = null_OPR;  // 피연산자가 없을 경우 빈줄 할당
     LOC = LDaddr;                  // 패스_1에서 끝까지 올라간 주소를 시작 주소로 되돌리기
@@ -44,10 +46,13 @@ void Pass_2(char* sfile) {
 
         // 기계 명령어면 asm_mnemonic, 지시어면 asm_space로 목적 코드 생성 및 길이 저장
         // (OPTAB, DCTAB 둘 다 아닌 경우는 패스_1에서 이미 오류 처리됨)
-        if ((op = see_OPTAB(OPcode))) len = asm_mnemonic(op);
-        else {
+        if ((op = see_OPTAB(OPcode))) {
+            len = asm_mnemonic(op);
+            put_obj_text(LOC, OBJC);  // 목적 프로그램: 텍스트(T) 레코드에 기계 명령어 목적 코드 추가
+        } else {
             dp = see_DCTAB(OPcode);
             len = asm_space(dp);
+            put_obj_data(LOC, OBJC);  // 목적 프로그램: 데이터(D) 레코드에 변수 공간 목적 코드 추가
         }
 
         if (!OPerand) OPerand = null_OPR;   // 피연산자가 없으면 빈줄 할당
@@ -61,6 +66,7 @@ void Pass_2(char* sfile) {
     if (!OPerand) OPerand = null_OPR;  // 피연산자가 없을 경우 빈줄 할당
     if (!LNO) LNO = null_LNO;          // 줄번호가 없으면 빈줄 할당
     LABEL = null_LBL;                  // 라벨에 빈줄 할당
+    put_obj_end(GOaddr);  // 목적 프로그램: 남은 레코드 출력 + 엔드(E) 레코드 출력 후 파일 닫기
     put_list();                        // [출력 6] END 줄 출력
 
     fclose(fp);
