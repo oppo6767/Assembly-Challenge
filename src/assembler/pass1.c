@@ -8,6 +8,7 @@
 #include "cal_mnmo.h"
 #include "len_mnmo.h"
 #include "len_drctv.h"
+#include "ftab.h"
 
 /*
 전체 흐름 (2-패스)
@@ -76,6 +77,12 @@ void Pass_1(char* sfile) {
 
         // 연산자가 END이면 멈추기
         if (!strcmp(OPcode, "END")) break;
+
+        // FILE 입력 - 패스 22내용
+        if (!strcmp(OPcode, "FILE")) {
+            ins_FTAB();                
+            continue;
+        }
 
         /**
          * [오류] 라벨이 있을 경우

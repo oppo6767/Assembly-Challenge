@@ -50,8 +50,8 @@ int read_line(FILE* fp) {
 
     // 만약 줄 번호 이후 //인 경우가 있을 수도 있으니 예외 처리하고 싶으면 하셈
 
-    // 명령어(OPTAB), 지시자(DCTAB), START, END 중 어느 것도 아니면 라벨로 보고 다음 토큰으로 이동
-    if (strcmp(cp, "END") && strcmp(cp, "START") && !see_OPTAB(cp) && !see_DCTAB(cp)) {
+    // 명령어(OPTAB), 지시자(DCTAB), START, END 중 어느 것도 아니면 라벨로 보고 다음 토큰으로 이동 - strcmp(cp, "FILE") = 패스22내용
+    if (strcmp(cp, "END") && strcmp(cp, "START") && strcmp(cp, "FILE") && !see_OPTAB(cp) && !see_DCTAB(cp)) {
         LABEL = cp;
         cp = strtok(NULL, " \t\n\r");
     }
